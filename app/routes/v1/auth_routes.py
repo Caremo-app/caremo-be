@@ -1,23 +1,15 @@
 from fastapi import APIRouter, Request, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from ...oauth import oauth
-from ...db.database import SessionLocal
 from sqlalchemy.orm import Session
 from ...repositories.emailfamily_repositories import EmailFamilyRepository
 from ...controllers.emailfamily_controllers import EmailFamilyController
 from ...util.jwt_generator import create_access_token, create_refresh_token
 from ...repositories.refreshtoken_repositories import RefreshTokenRepository
 from ...controllers.refreshtoken_controllers import RefreshTokenController
+from ...util.use_db import get_db
 
 import os
-
-# use DB
-def get_db():
-    db = SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
 
 router = APIRouter(
     prefix="/v1/auth",

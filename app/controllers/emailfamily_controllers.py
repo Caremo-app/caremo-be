@@ -27,3 +27,7 @@ class EmailFamilyController:
             raise HTTPException(status_code=404, detail="User not found")
         return user
     
+    def get_family_personas(self, email: str):
+        user = self.get_user(email)
+        return user.personas
+    
