@@ -1,0 +1,41 @@
+version: "3.9"
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - ENV=dev
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/caremo
+      - REDIS_URL=redis://redis:6379/0
+      - GOOGLE_CLIENT_ID=338120864595-gfm3ophsi5fds4kbm4sg3m8pbhdn29er.apps.googleusercontent.com
+      - GOOGLE_PROJECT_ID=concise-base-410103
+      - GOOGLE_AUTH_URI=https://accounts.google.com/o/oauth2/auth
+      - GOOGLE_TOKEN_URI=https://oauth2.googleapis.com/token
+      - GOOGLE_AUTH_PROVIDER_CERT_URL=https://www.googleapis.com/oauth2/v1/certs
+      - GOOGLE_CLIENT_SECRET=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
+      - JWT_SECRET=d65bd70f7a801fb265a187ba0cae9e5cac909449747136f568b4af5250523fe6
+      - GOOGLE_AUTH_CALLBACK_URI=http://localhost:8000/api/v1/auth/google/callback
+      # openssl rand -hex 32
+
+  postgres:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: caremo
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    ports:
+      - "6379:6379"

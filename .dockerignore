@@ -1,0 +1,34 @@
+# Don't include Docker config files in the image
+docker-compose.yml
+docker-compose.dev.yml
+Dockerfile
+Dockerfile.dev
+
+# Python artifacts
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment and secret files
+.env
+.env.*
+*.env
+
+# OS and editor junk
+*.DS_Store
+*.swp
+*.swo
+*.bak
+*.tmp
+.idea/
+.vscode/
+
+# Git and CI/CD
+.git/
+.gitignore
+.github/
+
+# Documentation and dev-only files
+README.md
+LICENSE
