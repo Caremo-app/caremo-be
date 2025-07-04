@@ -1,8 +1,23 @@
-from fastapi import APIRouter, Request, HTTPException
-from fastapi.responses import RedirectResponse, JSONResponse
-from ...controllers.user_controllers import get_users_controller
+from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi.responses import JSONResponse
 from ...oauth import oauth
+from ...db.database import SessionLocal
+from sqlalchemy.orm import Session
+from ...repositories.emailfamily_repositories import EmailFamilyRepository
+from ...controllers.emailfamily_controllers import EmailFamilyController
+from ...util.jwt_generator import create_access_token, create_refresh_token
+from ...repositories.refreshtoken_repositories import RefreshTokenRepository
+from ...controllers.refreshtoken_controllers import RefreshTokenController
+
 import os
+
+# use DB
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 router = APIRouter(
     prefix="/v1/auth",
@@ -18,16 +33,68 @@ async def get_users(request: Request):
     return await oauth.google.authorize_redirect(request, redirect_uri)
 
 @router.get("/google/callback")
-async def google_auth_callback(request: Request):
-    print(request.url)
+async def google_auth_callback(request: Request, db: Session = Depends(get_db)):
     try:
         token = await oauth.google.authorize_access_token(request)
         user_info = await oauth.google.get("userinfo", token=token)
         user_info = user_info.json()
-        
-        return JSONResponse({
-            "access_token": token["access_token"],
-            "user": user_info
-        })
+
+        email = user_info.get("email")
+        if not email:
+            raise HTTPException(status_code=400, detail="Email not found from Google")
+
+        # Try to find or create user
+        repo = EmailFamilyRepository(db)
+        controller = EmailFamilyController(repo)
+        user = controller.get_user(email)
+
+        if not user:
+            # If user does not exist, register a dummy password
+            user = controller.create_user(email=email, password="GOOGLE_OAUTH_DEFAULT")
+
+        jwt_token = create_access_token(email)
+        refresh_token = create_refresh_token(email)
+
+        return {
+            "access_token": jwt_token,
+            "refresh_token": refresh_token,
+            "token_type": "bearer",
+            "email": user.email
+        }
+
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Google OAuth failed: {e}")
+    
+@router.post("/signup")
+async def emailfamily_signup(email: str, password: str, db: Session = Depends(get_db)):
+    repo = EmailFamilyRepository(db)
+    controller = EmailFamilyController(repo)
+    return controller.create_user(email, password)
+
+@router.post("/signin")
+async def emailfamily_signin(email: str, password: str, db: Session = Depends(get_db)):
+    repo = EmailFamilyRepository(db)
+    controller = EmailFamilyController(repo)
+    user = controller.sign_in(email, password)
+    
+    jwt_token = create_access_token(email)
+    refresh_token = create_refresh_token(email)
+    
+    return {
+        "access_token": jwt_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer",
+        "email": user.email
+    }
+
+@router.post("/refresh")
+def refresh_token(refresh_token: str, db: Session = Depends(get_db)):
+    repo = RefreshTokenRepository(db)
+    controller = RefreshTokenController(repo)
+    return controller.rotate_token(refresh_token)
+
+@router.post("/logout")
+def logout(refresh_token: str, db: Session = Depends(get_db)):
+    repo = RefreshTokenRepository(db)
+    controller = RefreshTokenController(repo)
+    return controller.logout(refresh_token)

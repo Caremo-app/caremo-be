@@ -10,3 +10,4 @@ pyjwt
 starlette
 python-multipart
 itsdangerous
+bcrypt

@@ -4,8 +4,13 @@ from .routes.main_routes import router
 from authlib.integrations.starlette_client import OAuth
 from starlette.middleware.sessions import SessionMiddleware
 
+from .db.database import Base, engine, SessionLocal
+
 # Initiate App
 app = FastAPI()
+
+# Initialize DBs
+Base.metadata.create_all(bind=engine)
 
 # middlewares
 app.add_middleware(SessionMiddleware, secret_key="edbert1234")

@@ -1,22 +1,42 @@
-import jwt
-from datetime import datetime, timedelta
-import os
-
+from datetime import datetime, timedelta, timezone
 from fastapi import Depends, HTTPException, Header
 
-SECRET = os.environ.get("JWT_SECRET")
+import jwt
+from jwt import PyJWTError, ExpiredSignatureError
+import os
 
-def create_jwt(user_email: str):
+JWT_SECRET = os.environ.get("JWT_SECRET")
+JWT_REFRESH_SECRET = os.environ.get("JWT_REFRESH_SECRET")
+
+def create_access_token(user_email: str):
     payload = {
         "sub": user_email,
-        "exp": datetime.now(datetime.timezone.now) + timedelta(days=1)
+        "exp": datetime.now(datetime.timezone.now) + timedelta(minutes=30)
     }
-    return jwt.encode(payload, SECRET, algorithm="HS256")
+    return jwt.encode(payload, JWT_SECRET, algorithm="HS256")
+
+def create_refresh_token(email: str, expires_delta=timedelta(days=7)):
+    payload = {
+        "sub": email,
+        "exp": datetime.now(timezone.utc) + expires_delta
+    }
+    return jwt.encode(payload, JWT_REFRESH_SECRET, algorithm="HS256")
+
+def decode_refresh_token(token: str):
+    return jwt.decode(token, JWT_REFRESH_SECRET, algorithms=["HS256"])
 
 def verify_token(authorization: str = Header(...)):
     try:
-        token = authorization.split(" ")[1]
-        payload = jwt.decode(token, SECRET, algorithms=["HS256"])
-        return payload
-    except:
-        raise HTTPException(status_code=401, detail="Invalid Token")
+        scheme, token = authorization.split()
+        if scheme.lower() != "bearer":
+            raise HTTPException(status_code=401, detail="Invalid authentication scheme")
+        
+        payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
+        return payload  
+    
+    except ValueError:
+        raise HTTPException(status_code=401, detail="Invalid Authorization header format")
+    except ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Token expired")
+    except PyJWTError:
+        raise HTTPException(status_code=401, detail="Invalid token")
