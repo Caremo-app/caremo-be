@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, HTTPException, Depends
+from fastapi import APIRouter, Request, HTTPException, Depends, status
 from fastapi.responses import JSONResponse
 from ...oauth import oauth
 from sqlalchemy.orm import Session
@@ -61,7 +61,12 @@ async def google_auth_callback(request: Request, db: Session = Depends(get_db)):
 async def emailfamily_signup(email: str, password: str, db: Session = Depends(get_db)):
     repo = EmailFamilyRepository(db)
     controller = EmailFamilyController(repo)
-    return controller.create_user(email, password)
+    controller.create_user(email, password)
+    return JSONResponse(
+        status_code=status.HTTP_201_CREATED,
+        content={"message": "User created successfully"}
+    )
+    
 
 @router.post("/signin")
 async def emailfamily_signin(email: str, password: str, db: Session = Depends(get_db)):

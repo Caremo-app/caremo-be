@@ -11,7 +11,7 @@ JWT_REFRESH_SECRET = os.environ.get("JWT_REFRESH_SECRET")
 def create_access_token(user_email: str):
     payload = {
         "sub": user_email,
-        "exp": datetime.now(datetime.timezone.now) + timedelta(minutes=30)
+        "exp": datetime.now(timezone.utc) + timedelta(minutes=30)
     }
     return jwt.encode(payload, JWT_SECRET, algorithm="HS256")
 
