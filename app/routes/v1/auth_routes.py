@@ -56,6 +56,44 @@ async def google_auth_callback(request: Request, db: Session = Depends(get_db)):
 
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Google OAuth failed: {e}")
+
+class GoogleTokenRequest(BaseModel):
+    id_token: str
+
+@router.post("/google/token")
+async def google_token_login(payload: GoogleTokenRequest, db: Session = Depends(get_db)):
+    try:
+        CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID").strip()
+        idinfo = id_token.verify_oauth2_token(
+            payload.id_token,
+            google_requests.Request(),
+            CLIENT_ID
+        )
+
+        email = idinfo.get("email")
+        if not email:
+            raise HTTPException(status_code=400, detail="Email not found")
+
+        repo = EmailFamilyRepository(db)
+        controller = EmailFamilyController(repo)
+        user = controller.get_user(email)
+
+        if not user:
+            # Register user with dummy password
+            user = controller.create_user(email=email, password="GOOGLE_OAUTH_DEFAULT")
+
+        jwt_token = create_access_token(email)
+        refresh_token = create_refresh_token(email)
+
+        return {
+            "access_token": jwt_token,
+            "refresh_token": refresh_token,
+            "token_type": "bearer",
+            "email": user.email
+        }
+
+    except ValueError as e:
+        raise HTTPException(status_code=401, detail="Invalid ID token")
     
 @router.post("/signup")
 async def emailfamily_signup(email: str, password: str, db: Session = Depends(get_db)):
