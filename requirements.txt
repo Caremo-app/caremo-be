@@ -11,3 +11,4 @@ starlette
 python-multipart
 itsdangerous
 bcrypt
+pydantic[email]

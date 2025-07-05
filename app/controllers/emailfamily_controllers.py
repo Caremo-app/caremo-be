@@ -28,6 +28,8 @@ class EmailFamilyController:
         return user
     
     def get_family_personas(self, email: str):
-        user = self.get_user(email)
+        user = self.repo.get_by_email(email)
+        print(user)
+        print(user.__dict__)
         return user.personas
     

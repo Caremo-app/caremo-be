@@ -1,42 +1,54 @@
+from fastapi import HTTPException, Security
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from datetime import datetime, timedelta, timezone
-from fastapi import Depends, HTTPException, Header
-
-import jwt
-from jwt import PyJWTError, ExpiredSignatureError
+from jwt import decode, encode, ExpiredSignatureError, PyJWTError
 import os
 
-JWT_SECRET = os.environ.get("JWT_SECRET")
-JWT_REFRESH_SECRET = os.environ.get("JWT_REFRESH_SECRET")
+JWT_SECRET = os.getenv("JWT_SECRET")
+JWT_REFRESH_SECRET = os.getenv("JWT_REFRESH_SECRET")
+
+bearer_scheme = HTTPBearer(auto_error=False)
 
 def create_access_token(user_email: str):
     payload = {
         "sub": user_email,
-        "exp": datetime.now(timezone.utc) + timedelta(minutes=30)
+        "exp": datetime.now(timezone.utc) + timedelta(minutes=30),
+        "iat": datetime.now(timezone.utc),
+        "type": "access"
     }
-    return jwt.encode(payload, JWT_SECRET, algorithm="HS256")
+    return encode(payload, JWT_SECRET, algorithm="HS256")
 
-def create_refresh_token(email: str, expires_delta=timedelta(days=7)):
+def create_refresh_token(user_email: str):
     payload = {
-        "sub": email,
-        "exp": datetime.now(timezone.utc) + expires_delta
+        "sub": user_email,
+        "exp": datetime.now(timezone.utc) + timedelta(days=7),
+        "iat": datetime.now(timezone.utc),
+        "type": "refresh"
     }
-    return jwt.encode(payload, JWT_REFRESH_SECRET, algorithm="HS256")
+    return encode(payload, JWT_REFRESH_SECRET, algorithm="HS256")
 
 def decode_refresh_token(token: str):
-    return jwt.decode(token, JWT_REFRESH_SECRET, algorithms=["HS256"])
-
-def verify_token(authorization: str = Header(...)):
     try:
-        scheme, token = authorization.split()
-        if scheme.lower() != "bearer":
-            raise HTTPException(status_code=401, detail="Invalid authentication scheme")
-        
-        payload = jwt.decode(token, JWT_SECRET, algorithms=["HS256"])
-        return payload  
-    
-    except ValueError:
-        raise HTTPException(status_code=401, detail="Invalid Authorization header format")
+        payload = decode(token, JWT_REFRESH_SECRET, algorithms=["HS256"])
+        if payload.get("type") != "refresh":
+            raise HTTPException(status_code=401, detail="Invalid token type")
+        return payload
     except ExpiredSignatureError:
-        raise HTTPException(status_code=401, detail="Token expired")
+        raise HTTPException(status_code=401, detail="Refresh token expired")
+    except PyJWTError:
+        raise HTTPException(status_code=401, detail="Invalid refresh token")
+
+def verify_token(credentials: HTTPAuthorizationCredentials = Security(bearer_scheme)):
+    if not credentials:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    token = credentials.credentials
+    try:
+        payload = decode(token, JWT_SECRET, algorithms=["HS256"])
+        if payload.get("type") != "access":
+            raise HTTPException(status_code=401, detail="Invalid token type")
+        return payload
+    except ExpiredSignatureError:
+        raise HTTPException(status_code=401, detail="Access token expired")
     except PyJWTError:
         raise HTTPException(status_code=401, detail="Invalid token")

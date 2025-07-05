@@ -59,30 +59,37 @@ async def google_auth_callback(request: Request, db: Session = Depends(get_db)):
     
 @router.post("/signup")
 async def emailfamily_signup(email: str, password: str, db: Session = Depends(get_db)):
-    repo = EmailFamilyRepository(db)
-    controller = EmailFamilyController(repo)
-    controller.create_user(email, password)
-    return JSONResponse(
-        status_code=status.HTTP_201_CREATED,
-        content={"message": "User created successfully"}
-    )
+    try:
+        
+        repo = EmailFamilyRepository(db)
+        controller = EmailFamilyController(repo)
+        controller.create_user(email, password)
+        return JSONResponse(
+            status_code=status.HTTP_201_CREATED,
+            content={"message": "User created successfully"}
+        )
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
     
 
 @router.post("/signin")
 async def emailfamily_signin(email: str, password: str, db: Session = Depends(get_db)):
-    repo = EmailFamilyRepository(db)
-    controller = EmailFamilyController(repo)
-    user = controller.sign_in(email, password)
-    
-    jwt_token = create_access_token(email)
-    refresh_token = create_refresh_token(email)
-    
-    return {
-        "access_token": jwt_token,
-        "refresh_token": refresh_token,
-        "token_type": "bearer",
-        "email": user.email
-    }
+    try:
+        repo = EmailFamilyRepository(db)
+        controller = EmailFamilyController(repo)
+        user = controller.sign_in(email, password)
+        
+        jwt_token = create_access_token(email)
+        refresh_token = create_refresh_token(email)
+        
+        return {
+            "access_token": jwt_token,
+            "refresh_token": refresh_token,
+            "token_type": "bearer",
+            "email": user.email
+        }
+    except Exception as e:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
 
 @router.post("/refresh")
 def refresh_token(refresh_token: str, db: Session = Depends(get_db)):
