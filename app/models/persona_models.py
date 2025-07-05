@@ -4,6 +4,7 @@ from ..db.database import Base
 from .vitaldata_models import VitalData
 import enum
 
+
 class RoleEnum(str, enum.Enum):
     RELAY = "relay"
     RECEIVER = "receiver"
@@ -18,3 +19,4 @@ class PersonaEntity(Base):
 
     email_family = relationship("EmailFamilyEntity", backref="personas")
     vital_data = relationship("VitalData", back_populates="persona", cascade="all, delete-orphan")
+    
