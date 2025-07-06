@@ -22,18 +22,10 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 router = APIRouter(
-    prefix="/v1/vital",
+    # prefix="/v1/vital",
     tags=["Vital"]
 )
 
-@router.websocket("/send/{client_id}")
-async def get_data_to_store(websocket: WebSocket, client_id: int):
-    await manager.connect(websocket)
-    try:
-        while True:
-            data = await websocket.receive_text()
-            await manager.send_personal_message(f"You wrote: {data}", websocket)
-            await manager.broadcast(f"Client #{client_id} says: {data}")
-    except WebSocketDisconnect:
-        manager.disconnect(websocket)
-        await manager.broadcast(f"Client #{client_id} left the chat")
+# @router.get("/push/{client_id}")
+# async def push(client_id: int):
+#     return {"asd":"hallo " + str(client_id)}
