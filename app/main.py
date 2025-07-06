@@ -28,6 +28,7 @@ async def get_data_to_store(websocket: WebSocket, client_id: int):
     try:
         while True:
             data = await websocket.receive_text()
+            print(f"RECEIVED: {data}")
             await manager.send_personal_message(f"You wrote: {data}", websocket)
             await manager.broadcast(f"Client #{client_id} says: {data}")
     except WebSocketDisconnect:
