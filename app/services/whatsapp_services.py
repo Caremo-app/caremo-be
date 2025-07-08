@@ -28,6 +28,7 @@ class WhatsAppService:
             "messaging_product": "whatsapp",
             "to": recipient_number,
             "type": "template",
+            "receiving_type": "individual",
             "template": {
                 "name": template_name,
                 "language": {
@@ -39,8 +40,8 @@ class WhatsAppService:
                         "parameters": [
                             { "type": "text", "parameter_name": "user_name", "text": persona_relay },
                             { "type": "text", "parameter_name": "family_member_name", "text": persona_receive },
-                            { "type": "text", "parameter_name": "detection_time", "text": datetime.datetime.now() },
-                            { "type": "text", "parameter_name": "abnormality_type", "text": "DIED" }, #TODO: AI Infer Result
+                            { "type": "text", "parameter_name": "detection_time", "text": datetime.datetime.now().strftime("%d %B %Y, %H.%M WIB") },
+                            { "type": "text", "parameter_name": "abnormality_type", "text": "FALL" }, #TODO: AI Infer Result
                             { "type": "text", "parameter_name": "measured_value", "text": "0" }, #TODO: AI Infer Result
                             { "type": "text", "parameter_name": "normal_range", "text": "100" }, #TODO: AI Infer Result
                         ]

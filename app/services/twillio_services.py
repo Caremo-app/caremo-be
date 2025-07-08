@@ -15,4 +15,4 @@ call = client.calls.create(
   from_="+12295149385"
 )
 
-print(call.sid)
+print(call)
