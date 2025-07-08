@@ -6,6 +6,6 @@ router = APIRouter(
     tags=["Users"]
 )
 
-@router.get("/user")
-async def get_users():
-    return await get_users_controller()
+# @router.get("/user")
+# async def get_users():
+#     return await get_users_controller()

@@ -21,18 +21,5 @@ app.add_middleware(SessionMiddleware, secret_key="edbert1234")
 async def root():
     return JSONResponse(content={"status": "ok"}, status_code=200)
 
-@app.websocket("/ws/send/{client_id}")
-async def get_data_to_store(websocket: WebSocket, client_id: int):
-    await manager.connect(websocket)
-    try:
-        while True:
-            data = await websocket.receive_text()
-            print(f"RECEIVED: {data}")
-            await manager.send_personal_message(f"You wrote: {data}", websocket)
-            await manager.broadcast(f"Client #{client_id} says: {data}")
-    except WebSocketDisconnect:
-        manager.disconnect(websocket)
-        await manager.broadcast(f"Client #{client_id} left the chat")
-        
 # ALL ROUTES 
 app.include_router(router, prefix="/api")

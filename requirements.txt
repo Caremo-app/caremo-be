@@ -15,3 +15,8 @@ bcrypt
 pydantic[email]
 google
 requests
+numpy
+pandas
+scipy
+PyWavelets
+scikit-learn
