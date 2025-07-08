@@ -21,7 +21,6 @@ app.add_middleware(SessionMiddleware, secret_key="edbert1234")
 async def root():
     return JSONResponse(content={"status": "ok"}, status_code=200)
 
-
 @app.websocket("/ws/send/{client_id}")
 async def get_data_to_store(websocket: WebSocket, client_id: int):
     await manager.connect(websocket)

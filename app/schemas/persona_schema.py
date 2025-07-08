@@ -8,11 +8,12 @@ class RoleEnum(str, Enum):
 
 class PersonaCreateSchema(BaseModel):
     email: str #EmailStr
+    phone_number: str
     name: str
     role: RoleEnum
 
 class PersonaReadSchema(PersonaCreateSchema):
     id: int
-
+    
     class Config:
         from_attributes = True
