@@ -1,5 +1,5 @@
 import requests
-TOKEN = "EAASYQK9zPaQBPAA4vAPjmgkt0cfB2v0i0Oi7hbpLfA1NgeFnIt5arOXZAxvWpjeyqtb19a3ZBDFqUCbs8rC0cHm6j0Q8LftnjZBFZBigFUZBjVsbCDKBo2p9cXtIj4lSeqlbXD5lwzZBABqDyaMQgGeF9gjQay8b5xprhygYASeHRKZA1sv827SQ2z0VnoDFKpdyE42VbR9nYZC6kF7D8r2F5pV6tRgW1bRQmY1oX8IVZB8ldIQZDZD"
+TOKEN = "EAASYQK9zPaQBPOUdNWJ4HBZCdLyBvdHE1RaH5UyMruM313HdFXJea2JmTFXOIMHCI0IrCnhZBLupx1107zqZAbZCqQCSNbjoyGYQ0wh07jdY1a3oTnsM1cedsvl6KyY97uOR3f7lcSqgedTHLrvd4LfOxVKJGNCqEklqwoHgStCZBbPytODU7En5XpsjWUZCBq2yZAhmH74gvmytUyUDDz7EfM474a8JrEgLufClXyMvF5ZAZBAZDZD"
 url = "https://graph.facebook.com/v22.0/673983239136751/messages"
 headers = {
     "Authorization": f"Bearer {TOKEN}",  # Replace XXX with your actual token
@@ -8,17 +8,18 @@ headers = {
 payload = {
     "messaging_product": "whatsapp",
     "receiving_type": "individual",
-    "to": "6285186899792",
-    "type": "text",
-    # "template": {
-    #     "name": "hello_world",
-    #     "language": {
-    #         "code": "en_US"
-    #     }
-    # }
-    "text": {
-        "body": "sup nigga"
+    "to": "6285345871185",
+    # "type": "text",
+    "type": "template",
+    "template": {
+        "name": "hello_world",
+        "language": {
+            "code": "en_US"
+        }
     }
+    # "text": {
+    #     "body": "hello there, this is a testing bot"
+    # }
 }
 
 response = requests.post(url, headers=headers, json=payload)

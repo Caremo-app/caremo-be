@@ -14,3 +14,11 @@ def predict(name_persona: str, ppg_input: PPGInput):
     if not result.get('success'):
         raise HTTPException(status_code=400, detail=result.get('error', 'Prediction failed'))
     return result
+
+@router.post("/simulate-family")
+def simulate_family():
+    return {"msg": "Succeed"}
+
+@router.post("/simulate-hospital")
+def simulate_hospital():
+    return {"msg": "Succeed"}
