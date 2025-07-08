@@ -36,6 +36,7 @@ class PersonaController:
         new_persona = PersonaEntity(
             email=persona_data.email,
             name=persona_data.name,
+            phone_number=persona_data.phone_number,
             role=persona_data.role
         )
         created = self.persona_repo.create_persona(new_persona)
