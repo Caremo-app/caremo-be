@@ -10,7 +10,7 @@ class GeoapifyService:
         if not self.api_key:
             return "an unknown location"
 
-        url = f"{self.base_url}?lat={lat}&lon={lon}&apiKey={self.api_key}"
+        url = f"{self.base_url}?lat={lat}&lon={lon}&type=amenity&apiKey={self.api_key}"
         headers = {"Accept": "application/json"}
         
         try:
@@ -32,10 +32,10 @@ class GeoapifyService:
                 parts = [
                     props.get("name"),
                     props.get("street"),
-                    props.get("housenumber"),
-                    props.get("postcode"),
+                    props.get("suburb"),
                     props.get("city"),
-                    props.get("country")
+                    props.get("state"),
+                    props.get("postcode"),
                 ]
                 return ", ".join(filter(None, parts)) or "an unknown location"
 
