@@ -24,7 +24,7 @@ class WhatsAppService:
             "Content-Type": "application/json"
         }
 
-    def send_template_message(self, recipient_number: str, template_name: str, persona_relay: str, persona_receive: str, bpm: int, language_code: str = "en"):
+    def send_template_message(self, recipient_number: str, template_name: str, persona_relay: str, persona_receive: str, bpm: int, location: str, language_code: str = "en"):
         payload = {
             "messaging_product": "whatsapp",
             "to": recipient_number,
@@ -54,7 +54,7 @@ class WhatsAppService:
         response = requests.post(self.api_url, headers=self.headers, json=payload)
         return response.status_code, response.json()
     
-    def send_text_message(self, recipient_number: str, msg: str, language_code: str = "en_US"):
+    def send_text_message(self, recipient_number: str, msg: str, language_code: str = "en"):
         payload = {
             "messaging_product": "whatsapp",
             "to": recipient_number,
