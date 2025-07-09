@@ -21,3 +21,4 @@ scipy
 PyWavelets
 scikit-learn
 twilio
+python-dotenv

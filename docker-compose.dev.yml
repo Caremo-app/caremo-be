@@ -13,28 +13,32 @@ services:
       - redis
     environment:
       - ENV=dev
-      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/caremo
-      - REDIS_URL=redis://redis:6379/0
-      - GOOGLE_CLIENT_ID=338120864595-gfm3ophsi5fds4kbm4sg3m8pbhdn29er.apps.googleusercontent.com
-      - GOOGLE_PROJECT_ID=concise-base-410103
-      - GOOGLE_AUTH_URI=https://accounts.google.com/o/oauth2/auth
-      - GOOGLE_TOKEN_URI=https://oauth2.googleapis.com/token
-      - GOOGLE_AUTH_PROVIDER_CERT_URL=https://www.googleapis.com/oauth2/v1/certs
-      - GOOGLE_CLIENT_SECRET=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
-      - JWT_SECRET=d65bd70f7a801fb265a187ba0cae9e5cac909449747136f568b4af5250523fe6
-      - JWT_REFRESH_SECRET=837b853b367ce49eb202822297c4b0da49dcce4cacff567eb730878a48b2f98f
-      - GOOGLE_AUTH_CALLBACK_URI=http://localhost:8000/api/v1/auth/google/callback
       # openssl rand -hex 32
+      - DATABASE_URL=${DATABASE_URL}
+      - REDIS_URL=${REDIS_URL}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_PROJECT_ID=${GOOGLE_PROJECT_ID}
+      - GOOGLE_AUTH_URI=${GOOGLE_AUTH_URI}
+      - GOOGLE_TOKEN_URI=${GOOGLE_TOKEN_URI}
+      - GOOGLE_AUTH_PROVIDER_CERT_URL=${GOOGLE_AUTH_PROVIDER_CERT_URL}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      - GOOGLE_AUTH_CALLBACK_URI=${GOOGLE_AUTH_CALLBACK_URI}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_REFRESH_SECRET=${JWT_REFRESH_SECRET}
+      - TWILIO_ACCOUNT_SID=${TWILIO_ACCOUNT_SID}
+      - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
+      - WHATSAPP_TOKEN=${WHATSAPP_TOKEN}
+      - WHATSAPP_ID=${WHATSAPP_ID}
 
   postgres:
     image: postgres:15-alpine
     restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: caremo
     ports:
       - "5432:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
 
   redis:
     image: redis:7

@@ -1,6 +1,10 @@
 import requests
-TOKEN = "EAAVChHGh8UABPH2qNukbklV8XWnZC7wPtmsgTMT9uMIgx4MOF8vRPnZAXZAzaZB7PvQH8MK6pwPzGkL6Hx8Rfn8qxIBirZBRuwmVWZBZC1fLZCkrZCbpoQZCZAAAkgNSWHEdVJuJ1PKCab9V3nOLmzyGCibxASS50wgBet2Xc7KvSrvE63pgOcH3KA5ptPlbWkNZBZChaDTVj8nOhnZB0vGZCm9ZC1e17YDu3FK3LEcAwuEJ4zgZBOXVBhAZDZD"
-url = "https://graph.facebook.com/v22.0/758357087357144/messages"
+from dotenv import load_dotenv
+import os
+load_dotenv()
+
+TOKEN = os.environ.get("WHATSAPP_TOKEN")
+url = f"https://graph.facebook.com/v22.0/{os.environ.get("WHATSAPP_ID")}/messages"
 headers = {
     "Authorization": f"Bearer {TOKEN}",  # Replace XXX with your actual token
     "Content-Type": "application/json"
