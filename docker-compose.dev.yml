@@ -8,12 +8,12 @@ services:
       - "8000:8000"
     volumes:
       - .:/app
+      
     depends_on:
       - postgres
       - redis
     environment:
       - ENV=dev
-      # openssl rand -hex 32
       - DATABASE_URL=${DATABASE_URL}
       - REDIS_URL=${REDIS_URL}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
@@ -29,6 +29,7 @@ services:
       - TWILIO_AUTH_TOKEN=${TWILIO_AUTH_TOKEN}
       - WHATSAPP_TOKEN=${WHATSAPP_TOKEN}
       - WHATSAPP_ID=${WHATSAPP_ID}
+      # openssl rand -hex 32
 
   postgres:
     image: postgres:15-alpine

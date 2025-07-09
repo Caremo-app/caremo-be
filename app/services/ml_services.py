@@ -5,7 +5,7 @@ from scipy import signal
 import pywt
 from scipy.stats import skew, kurtosis
 from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import List
 
 app = FastAPI()
@@ -17,6 +17,11 @@ ARRHYTHMIA_TYPES = {
     'Ventricular_Tachycardia': 3,
     'Ventricular_Flutter_Fib': 4
 }
+
+class Location(BaseModel):
+    latitude: float = Field(..., ge=-90.0, le=90.0, description="Latitude (-90 to 90)")
+    longitude: float = Field(..., ge=-180.0, le=180.0, description="Longitude (-180 to 180)")
+
 
 class PPGInput(BaseModel):
     signal: List[float]

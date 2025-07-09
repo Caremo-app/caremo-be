@@ -1,6 +1,7 @@
 import requests
 import enum
 import datetime
+from .ml_services import Location
 
 """
 List Possible PHONE NUMBER RECEIVER
@@ -23,7 +24,7 @@ class WhatsAppService:
             "Content-Type": "application/json"
         }
 
-    def send_template_message(self, recipient_number: str, template_name: str, persona_relay: str, persona_receive: str, language_code: str = "en_US"):
+    def send_template_message(self, recipient_number: str, template_name: str, persona_relay: str, persona_receive: str, bpm: int, language_code: str = "en"):
         payload = {
             "messaging_product": "whatsapp",
             "to": recipient_number,

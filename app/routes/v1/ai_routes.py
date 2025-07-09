@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import Response
-from ...services.ml_services import ArrhythmiaPredictor, PPGInput
+from ...services.ml_services import ArrhythmiaPredictor, PPGInput, Location
 from ...services.whatsapp_services import WhatsAppService, PhoneEnum
 from ...services.twillio_services import call_hospital
 import os
@@ -14,7 +14,7 @@ router = APIRouter(
 )
 
 @router.post("/predict")
-def predict(name_persona: str, ppg_input: PPGInput):
+def predict(name_persona: str, ppg_input: PPGInput, location: Location):
     
     if 60 <= ppg_input.heartbeat <= 100:
         return {"status": "healthy", "message": "Heartbeat normal"}
@@ -27,21 +27,22 @@ def predict(name_persona: str, ppg_input: PPGInput):
     if True: # ini untuk dangerous
         whatsapp_api.send_template_message(
             recipient_number=PhoneEnum.NO_EDBERT.value,
-            template_name="hello_world",
+            template_name="health_warning",
             persona_relay="System",
-            persona_receive=name_persona
+            persona_receive=name_persona,
+            location=location
         )
-        call_hospital(
-            phone_number="+6285345871185",
-            persona=name_persona,
-            location="Jl. Beringin No. 7, Bekasi"
-        )
+        # call_hospital(
+        #     phone_number="+6285345871185",
+        #     persona=name_persona,
+        #     location="Jl. Beringin No. 7, Bekasi"
+        # )
         
     return result
 
 @router.post("/simulate-family")
 def simulate_family():
-    whatsapp_api.send_template_message(PhoneEnum.NO_EDBERT, 'hello_world', 'Kakek', 'Edbert')
+    whatsapp_api.send_template_message(PhoneEnum.NO_EDBERT, 'health_warning', 'Kakek', 'Edbert')
     return {"msg": "Succeed"}
 
 @router.post("/simulate-hospital")
