@@ -17,5 +17,5 @@ class PersonaEntity(Base):
     role = Column(Enum(RoleEnum), nullable=False)
     phone_number = Column(String, nullable=False)
 
-    email_family = relationship("EmailFamilyEntity", backref="personas")
+    email_family = relationship("EmailFamilyEntity", back_populates="personas")
     vital_data = relationship("VitalData", back_populates="persona", cascade="all, delete-orphan")

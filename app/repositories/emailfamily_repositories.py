@@ -1,4 +1,4 @@
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 from ..models.emailfamily_models import EmailFamilyEntity
 
 class EmailFamilyRepository:
@@ -6,8 +6,10 @@ class EmailFamilyRepository:
         self.db = db
 
     def get_by_email(self, email: str):
-        return self.db.query(EmailFamilyEntity).filter(EmailFamilyEntity.email == email).first()
-
+        return self.db.query(EmailFamilyEntity).options(
+            selectinload(EmailFamilyEntity.personas)
+        ).filter(EmailFamilyEntity.email == email).first()
+    
     def create(self, email: str, hashed_password: str):
         new_user = EmailFamilyEntity(email=email, password=hashed_password)
         self.db.add(new_user)

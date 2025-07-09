@@ -43,7 +43,7 @@ class WhatsAppService:
                             { "type": "text", "parameter_name": "family_member_name", "text": persona_receive },
                             { "type": "text", "parameter_name": "detection_time", "text": datetime.datetime.now().strftime("%d %B %Y, %H.%M WIB") },
                             { "type": "text", "parameter_name": "abnormality_type", "text": "FALL" }, #TODO: AI Infer Result
-                            { "type": "text", "parameter_name": "measured_value", "text": "0" }, #TODO: AI Infer Result
+                            { "type": "text", "parameter_name": "measured_value", "text": bpm },
                             { "type": "text", "parameter_name": "normal_range", "text": "100" }, #TODO: AI Infer Result
                         ]
                     }

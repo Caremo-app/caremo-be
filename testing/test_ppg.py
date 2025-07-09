@@ -1,7 +1,7 @@
 import requests
 import numpy as np
 
-URL = "https://localhost/api/v1/ai/predict?name_persona=TestUser"
+URL = "https://localhost/api/v1/ai/predict?name_persona=Kakek"
 
 # Create synthetic PPG signal
 duration_seconds = 60
@@ -19,16 +19,26 @@ ppg_signal = (
 
 # Convert NumPy array to list for JSON serialization
 data = {
-    "signal": ppg_signal.tolist(),
-    "heartbeat": 90,
-    "sampling_rate": 250
+    "ppg_input": {
+        "signal": ppg_signal.tolist(),
+        "heartbeat": 150,
+        "sampling_rate": 250,
+    },
+    "location": {
+        "latitude": -90,
+        "longitude": -100
+    }
+}
+
+header = {
+    'Authorization': "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhc2QiLCJleHAiOjE3NTIwNzUwNzQsImlhdCI6MTc1MjA3MzI3NCwidHlwZSI6ImFjY2VzcyJ9.j2LspJM9si9bhFRS1YJqwsYTVMWXRrJDFatJnlBS-_k"
 }
 
 # Optional: Bypass SSL warnings for self-signed certs
 import urllib3
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-res = requests.post(URL, json=data, verify=False)  # Set verify=True in production
+res = requests.post(URL, json=data, verify=False, headers=header)  # Set verify=True in production
 
 # Output response
 print(res.status_code)
