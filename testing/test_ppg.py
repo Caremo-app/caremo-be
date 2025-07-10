@@ -25,13 +25,13 @@ data = {
         "sampling_rate": 250,
     },
     "location": {
-        "latitude": -90,
-        "longitude": -100
+        "latitude": -6.200320,
+        "longitude": 106.816718
     }
 }
 
 header = {
-    'Authorization': "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhc2QiLCJleHAiOjE3NTIwNzUwNzQsImlhdCI6MTc1MjA3MzI3NCwidHlwZSI6ImFjY2VzcyJ9.j2LspJM9si9bhFRS1YJqwsYTVMWXRrJDFatJnlBS-_k"
+    'Authorization': "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhc2QiLCJleHAiOjE3NTIxNDI3MTIsImlhdCI6MTc1MjE0MDkxMiwidHlwZSI6ImFjY2VzcyJ9.F_utSWqm7ax1oP9THGE0z5V7mHbBS7ocIA5EDWKwEoA"
 }
 
 # Optional: Bypass SSL warnings for self-signed certs

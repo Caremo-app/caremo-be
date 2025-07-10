@@ -9,6 +9,7 @@ from ...util.jwt_generator import verify_token
 from ...util.use_db import get_db
 from ...repositories.emailfamily_repositories import EmailFamilyRepository
 from ...controllers.emailfamily_controllers import EmailFamilyController
+import datetime
 import os
 
 predictor = ArrhythmiaPredictor('/app/app/gradient_boost_arrhythmia_model.pkl')
@@ -51,14 +52,20 @@ def predict(
     # Filter receivers and send WhatsApp
     receiver_personas = [p for p in personas if p.role == "receiver"]
     for persona in receiver_personas:
-        whatsapp_api.send_template_message(
-            recipient_number=persona.phone_number,
-            template_name="health_warning",
-            persona_relay=name_persona,
-            persona_receive=persona.name,
-            bpm=ppg_input.heartbeat,
-            location=resolved_address
-        )
+        user_name = persona.name
+        family_member_name = name_persona
+        abnormality_type = result.get("arrhythmia_name")
+        measured_value = ppg_input.heartbeat
+        msg = f"Hi {user_name}, this is a health update from Caremo.\n📌 We've detected an unusual pattern in {family_member_name}'s vital signs at {datetime.datetime.now().strftime("%d %B %Y, %H.%M WIB")}.\n🩺 Detected Issue: {abnormality_type}\n❤️ Heart Rate (BPM): {measured_value}\n📍 Location: {resolved_address}\n\nPlease check on them as soon as possible, or consult a healthcare professional if needed."
+        whatsapp_api.send_text_message(persona.phone_number[1::], msg, 'en')
+        # whatsapp_api.send_template_message(
+        #     recipient_number=persona.phone_number,
+        #     template_name="health_warning",
+        #     persona_relay=name_persona,
+        #     persona_receive=persona.name,
+        #     bpm=ppg_input.heartbeat,
+        #     location=resolved_address
+        # )
       
     # call_hospital(
     #     phone_number="+6285345871185",
