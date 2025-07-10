@@ -25,6 +25,8 @@
 
 ## API Endpoint Documentation
 
+![alt text](image.png)
+
 > See full docs at `/docs` ([api.caremo.id/docs](https://api.caremo.id/docs))
 
 ## 🛠️ Tech Stack
@@ -37,6 +39,9 @@
 * [Docker](https://www.docker.com/)
 * [NGINX](https://www.nginx.com/)
 
+## Service Flow
+
+![alt text](image-1.png)
 
 ## 📄 License
 
