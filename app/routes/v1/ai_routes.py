@@ -75,33 +75,20 @@ def predict(
         
     return result
 
-@router.post("/simulate-family")
-def simulate_family(name_persona: str, location: Location, payload: dict = Depends(verify_token), db: Session = Depends(get_db)):
+@router.post("/simulate-critical-condition")
+def simulate_critical_condition(name_persona: str, location: Location, payload: dict = Depends(verify_token), db: Session = Depends(get_db)):
     resolved_address = geo_service.reverse_geocode(location.latitude, location.longitude)
     
     user_name = "AKMAL"
     family_member_name = name_persona
-    abnormality_type = "Asystole"
+    abnormality_type = "Tachycardia"
     measured_value = 150
-    msg = f"Hi {user_name}, this is a health update from Caremo.\n📌 We've detected an unusual pattern in {family_member_name}'s vital signs at {datetime.datetime.now().strftime("%d %B %Y, %H.%M WIB")}.\n🩺 Detected Issue: {abnormality_type}\n❤️ Heart Rate (BPM): {measured_value}\n📍 Location: {resolved_address}\n\nPlease check on them as soon as possible, or consult a healthcare professional if needed."
+    msg = f"Hi {user_name}, this is a health update from Caremo.\n📌 We've detected an unusual pattern in {family_member_name}'s vital signs at {datetime.datetime.now().strftime("%d %B %Y, %H.%M WIB")}.\n🩺 Detected Issue: {abnormality_type}\n❤️ Heart Rate (BPM): {measured_value}\n📍 Location: {resolved_address}\n\nWe have call an ambulance to {resolved_address} for {name_persona}"
     whatsapp_api.send_text_message(PhoneEnum.NO_AKMAL, msg, 'en')
             
     # whatsapp_api.send_template_message(PhoneEnum.NO_AKMAL, 'health_warning', name_persona, 'SYSTEM', 150, resolved_address)
     return {"msg": "Succeed"}
 
-@router.post("/simulate-hospital")
-def simulate_hospital(name_persona: str, location: Location, payload: dict = Depends(verify_token), db: Session = Depends(get_db)):
-    resolved_address = geo_service.reverse_geocode(location.latitude, location.longitude)
-    
-    user_name = "AKMAL"
-    family_member_name = name_persona
-    abnormality_type = "Asystole"
-    measured_value = 150
-    msg = f"Hi {user_name}, this is a health update from Caremo.\n📌 We've detected an unusual pattern in {family_member_name}'s vital signs at {datetime.datetime.now().strftime("%d %B %Y, %H.%M WIB")}.\n🩺 Detected Issue: {abnormality_type}\n❤️ Heart Rate (BPM): {measured_value}\n📍 Location: {resolved_address}\n\nWe have call an ambulance to {resolved_address} for {name_persona}"
-        
-        
-    whatsapp_api.send_text_message(PhoneEnum.NO_AKMAL, msg, 'en')
-    return {"msg": "Succeed"}
 
 @router.get("/twiml")
 def twiml(request: Request, persona: str = "Unknown", location: str = "an unknown location"):
