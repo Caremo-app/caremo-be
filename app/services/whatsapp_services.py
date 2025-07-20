@@ -24,7 +24,7 @@ class WhatsAppService:
             "Content-Type": "application/json"
         }
 
-    def send_template_message(self, recipient_number: str, template_name: str, persona_relay: str, persona_receive: str, bpm: int, location: str, language_code: str = "en"):
+    def send_template_message(self, recipient_number: str, template_name: str, persona_relay: str, persona_receive: str, bpm: int, location: str, abnormality_type, language_code: str = "en"):
         payload = {
             "messaging_product": "whatsapp",
             "to": recipient_number,
@@ -39,12 +39,14 @@ class WhatsAppService:
                     {
                         "type": "body",
                         "parameters": [
-                            { "type": "text", "parameter_name": "user_name", "text": persona_relay },
-                            { "type": "text", "parameter_name": "family_member_name", "text": persona_receive },
+                            { "type": "text", "parameter_name": "user_name", "text": persona_receive },
+                            { "type": "text", "parameter_name": "family_member_name", "text": persona_relay },
                             { "type": "text", "parameter_name": "detection_time", "text": datetime.datetime.now().strftime("%d %B %Y, %H.%M WIB") },
-                            { "type": "text", "parameter_name": "abnormality_type", "text": "FALL" }, #TODO: AI Infer Result
+                            { "type": "text", "parameter_name": "abnormality_type", "text": abnormality_type }, #TODO: AI Infer Result
                             { "type": "text", "parameter_name": "measured_value", "text": bpm },
-                            { "type": "text", "parameter_name": "normal_range", "text": "100" }, #TODO: AI Infer Result
+                            { "type": "text", "parameter_name": "location", "text": location }, #TODO: AI Infer Result
+                            { "type": "text", "parameter_name": "location2", "text": location }, #TODO: AI Infer Result
+                            { "type": "text", "parameter_name": "family_member_name2", "text": persona_relay },
                         ]
                     }
                 ]

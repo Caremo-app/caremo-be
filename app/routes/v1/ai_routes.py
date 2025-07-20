@@ -56,16 +56,17 @@ def predict(
         family_member_name = name_persona
         abnormality_type = result.get("arrhythmia_name")
         measured_value = ppg_input.heartbeat
-        msg = f"Hi {user_name}, this is a health update from Caremo.\n📌 We've detected an unusual pattern in {family_member_name}'s vital signs at {datetime.datetime.now().strftime("%d %B %Y, %H.%M WIB")}.\n🩺 Detected Issue: {abnormality_type}\n❤️ Heart Rate (BPM): {measured_value}\n📍 Location: {resolved_address}\n\nPlease check on them as soon as possible, or consult a healthcare professional if needed."
-        whatsapp_api.send_text_message(persona.phone_number[1::], msg, 'en')
-        # whatsapp_api.send_template_message(
-        #     recipient_number=persona.phone_number,
-        #     template_name="health_warning",
-        #     persona_relay=name_persona,
-        #     persona_receive=persona.name,
-        #     bpm=ppg_input.heartbeat,
-        #     location=resolved_address
-        # )
+        # msg = f"Hi {user_name}, this is a health update from Caremo.\n📌 We've detected an unusual pattern in {family_member_name}'s vital signs at {datetime.datetime.now().strftime("%d %B %Y, %H.%M WIB")}.\n🩺 Detected Issue: {abnormality_type}\n❤️ Heart Rate (BPM): {measured_value}\n📍 Location: {resolved_address}\n\nPlease check on them as soon as possible, or consult a healthcare professional if needed."
+        # whatsapp_api.send_text_message(persona.phone_number[1::], msg, 'en')
+        whatsapp_api.send_template_message(
+            recipient_number=persona.phone_number,
+            template_name="health_warning",
+            persona_relay=name_persona,
+            persona_receive=persona.name,
+            bpm=ppg_input.heartbeat,
+            location=resolved_address,
+            abnormality_type=abnormality_type
+        )
       
     # call_hospital(
     #     phone_number="+6285345871185",
@@ -77,16 +78,26 @@ def predict(
 
 @router.post("/simulate-critical-condition")
 def simulate_critical_condition(name_persona: str, location: Location, payload: dict = Depends(verify_token), db: Session = Depends(get_db)):
-    resolved_address = geo_service.reverse_geocode(location.latitude, location.longitude)
+    # resolved_address = geo_service.reverse_geocode(location.latitude, location.longitude)
+    resolved_address = geo_service.reverse_geocode(-6.264884104691765, 106.65930129320886)
     
     user_name = "AKMAL"
     family_member_name = name_persona
     abnormality_type = "Tachycardia"
     measured_value = 150
-    msg = f"Hi {user_name}, this is a health update from Caremo.\n📌 We've detected an unusual pattern in {family_member_name}'s vital signs at {datetime.datetime.now().strftime("%d %B %Y, %H.%M WIB")}.\n🩺 Detected Issue: {abnormality_type}\n❤️ Heart Rate (BPM): {measured_value}\n📍 Location: {resolved_address}\n\nWe have call an ambulance to {resolved_address} for {name_persona}"
-    whatsapp_api.send_text_message(PhoneEnum.NO_AKMAL, msg, 'en')
+    # msg = f"Hi {user_name}, this is a health update from Caremo.\n📌 We've detected an unusual pattern in {family_member_name}'s vital signs at {datetime.datetime.now().strftime("%d %B %Y, %H.%M WIB")}.\n🩺 Detected Issue: {abnormality_type}\n❤️ Heart Rate (BPM): {measured_value}\n📍 Location: {resolved_address}\n\nWe have call an ambulance to {resolved_address} for {name_persona}"
+    # whatsapp_api.send_text_message(PhoneEnum.NO_AKMAL, msg, 'en')
             
-    # whatsapp_api.send_template_message(PhoneEnum.NO_AKMAL, 'health_warning', name_persona, 'SYSTEM', 150, resolved_address)
+    whatsapp_api.send_template_message(
+        PhoneEnum.NO_RAFI,
+        'health_warning',
+        name_persona,
+        'Rafi',
+        150,
+        resolved_address,
+        abnormality_type
+    )
+    
     return {"msg": "Succeed"}
 
 
